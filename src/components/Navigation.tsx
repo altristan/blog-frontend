@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Link, useHistory, withRouter} from 'react-router-dom';
 import {AuthContext} from "../context/auth-context";
 import {authorizedAction, unauthorizedAction} from "../context/auth-actions";
@@ -6,41 +6,24 @@ import {useForm} from "react-hook-form";
 
 function Navigation() {
     const {state, dispatch} = useContext(AuthContext);
+    useEffect(() => {
+        dispatch(authorizedAction());
+    }, []);
+
+    // console.log(state);
 
     return (
-        // <header>
-        //     <div className="container-fluid position-relative no-side-padding">
-        //         <ul className="main-menu visible-on-click" id="main-menu">
-        //             <li><Link className="nav-link"
-        //                       to="/"
-        //                       onClick={() => dispatch(authorizedAction())}
-        //             > Home </Link></li>
-        //             {!state.isAuthenticated && !(!!state.user) && (
-        //                 <li><Link className="nav-link" to="/auth"> Register/Login </Link></li>
-        //             )}
-        //             {state.isAuthenticated && !!state.user && (
-        //                 <li><Link className="nav-link"
-        //                           to="/auth"
-        //                           onClick={() => {
-        //                               window.localStorage.clear();
-        //                               dispatch(unauthorizedAction());
-        //                           }}
-        //                 > Logout </Link></li>
-        //             )}
-        //             {state.isAuthenticated && !!state.user && (
-        //                 <li><Link className="nav-link" to="/create"> Create </Link></li>
-        //             )}
-        //         </ul>
-        //     </div>
-        // </header>
         <nav className="navbar navbar-expand-xl navbar-dark bg-dark fixed-top">
 
             {/*<li><a className="navbar-brand" href="/">Home</a></li>*/}
-            <li><Link className="navbar-brand nav-link" to="/"
-                      onClick={() => dispatch(authorizedAction())}
-            > Home </Link></li>
+            <li><Link className="navbar-brand nav-link"
+                      to="/" onClick={() => {dispatch(authorizedAction());
+            }}> Home </Link></li>
             {!state.isAuthenticated && !(!!state.user) && (
                 <li><Link className="navbar-brand nav-link" to="/auth"> Account </Link></li>
+            )}
+            {state.isAuthenticated && !!state.user && (
+                <li><Link className="navbar-brand nav-link" to="/create"> Create </Link></li>
             )}
             {state.isAuthenticated && !!state.user && (
                 <li><Link className="navbar-brand nav-link"
@@ -50,9 +33,6 @@ function Navigation() {
                               dispatch(unauthorizedAction());
                           }}
                 > Logout </Link></li>
-            )}
-            {state.isAuthenticated && !!state.user && (
-                <li><Link className="nav-link" to="/create"> Create </Link></li>
             )}
 
             <div className="collapse navbar-collapse bg-dark" id="navbarSupportedContent">

@@ -31,7 +31,10 @@ function Home(): JSX.Element {
             const json = await response.json();
             setPosts(json)
         }
-        fetchPosts();
+        fetchPosts().then();
+        return () => {
+            setPosts(false);
+        }
     }, [])
 
     return (

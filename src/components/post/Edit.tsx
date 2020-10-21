@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-// import {useAuth} from "../../context/auth-context";
+import {useForm} from "react-hook-form";
 
 function Edit(): JSX.Element {
     // const {user, token} = useAuth();
     let history = useHistory();
     let {postId} = useParams();
+    const {register, handleSubmit, errors} = useForm();
 
     interface IValues {
         [key: string]: any;
@@ -15,18 +16,21 @@ function Edit(): JSX.Element {
     const [values, setValues] = useState<IValues>([]);
     const [submitSuccess, setSubmitSuccess] = useState<boolean>(false)
     const [loading, setLoading] = useState(false);
+    const token = window.localStorage.getItem('token');
 
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
             const response = await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/blog/post/${postId}`);
-            const json = await response.json();
+            const json = await response.json().then(
+
+            );
             setPost(json)
         }
         fetchData();
     }, [postId]);
 
-    const handleFormSubmission = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-        e.preventDefault();
+    const handleFormSubmission = async (e: React.FormEvent<HTMLFormElement> | any): Promise<void> => {
+        // e.preventDefault();
         setLoading(true);
         const submitSuccess: boolean = await submitForm();
         setSubmitSuccess(submitSuccess);
@@ -42,11 +46,12 @@ function Edit(): JSX.Element {
                 headers: new Headers({
                     "Content-Type": "application/json",
                     Accept: "application/json",
-                    // "authorization": `Bearer ${token}`
+                    "authorization": `Bearer ${token}`
                 }),
                 body: JSON.stringify(values)
-            });
-            return response.ok;
+            }).then((res) => console.log(res))
+                .catch(err => console.log(err));
+            return true;
         } catch (ex) {
             return false;
         }
@@ -59,7 +64,7 @@ function Edit(): JSX.Element {
     }
 
     return (
-        <div className={'page-wrapper'}>
+        <div className='page-wrapper fixed-top-margin'>
             {post &&
             <div className={"col-md-12 form-wrapper"}>
                 <h2> Edit Post </h2>
@@ -68,7 +73,7 @@ function Edit(): JSX.Element {
                         The post has been edited successfully!
                     </div>
                 )}
-                <form id={"create-post-form"} onSubmit={handleFormSubmission} noValidate={true}>
+                <form id={"create-post-form"} onSubmit={handleSubmit(handleFormSubmission)} noValidate={true}>
                     <div className="form-group col-md-12">
                         <label htmlFor="title"> Title </label>
                         <input type="text" id="title" defaultValue={post.title} onChange={(e) => handleInputChanges(e)}

@@ -66,7 +66,7 @@ function Create(): JSX.Element {
 
     return (
         <div>
-            <div className={"col-md-12 form-wrapper"}>
+            <div className="col-md-12 form-wrapper fixed-top-margin">
                 <h2> Create Post </h2>
                 {!submitSuccess && (
                     <div className="alert alert-info" role="alert">

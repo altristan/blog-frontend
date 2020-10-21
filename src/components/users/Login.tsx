@@ -47,7 +47,7 @@ function Login(): JSX.Element {
             })
                 .then(response => response.json())
                 .then(json => {
-                    console.log(json);
+                    // console.log(json);
                     localStorage.setItem('user', json.username);
                     localStorage.setItem('token', json.accessToken);
                 })
@@ -66,7 +66,7 @@ function Login(): JSX.Element {
     }
 
     return (
-        <div className="profile-area">
+        <div className="profile-area fixed-top-margin">
             <div className={"col-md-12 form-wrapper"}>
                 {submitSuccess && (
                     <div className="alert alert-info" role="alert">
@@ -116,7 +116,7 @@ function Login(): JSX.Element {
                     <div className="form-group col-md-4 pull-right">
                         <button className="btn btn-success"
                                 type="submit"
-                                onClick={() => dispatch(authorizedAction())}
+                                // onClick={() => dispatch(authorizedAction())}
                         >
                             Sign in
                         </button>

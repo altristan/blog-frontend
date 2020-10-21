@@ -658,3 +658,7 @@ em{display:none;}
 .error {
   font-size: 12px;
 }
+
+.fixed-top-margin {
+  margin-top: 115px;
+}
