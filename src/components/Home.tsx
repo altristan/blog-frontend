@@ -1,10 +1,10 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {Link, useHistory} from 'react-router-dom';
-import {useAuth} from "../context/auth-context";
+import {AuthContext} from "../context/auth-context";
 
 function Home(): JSX.Element {
     let history = useHistory()
-    const {isAuthenticated, user, token} = useAuth();
+    const {state} = useContext(AuthContext);
     const [posts, setPosts] = useState<any>();
 
     const deletePost = async (id: string) => {
@@ -13,7 +13,7 @@ function Home(): JSX.Element {
             headers: new Headers({
                 "Content-Type": "application/json",
                 Accept: "application/json",
-                "authorization": `Bearer ${token}`
+                // "authorization": `Bearer ${token}`
             })
         });
         _removePostFromView(id);
@@ -35,7 +35,7 @@ function Home(): JSX.Element {
     }, [])
 
     return (
-        <section className="blog-area section">
+        <section className="blog-area section mt-5">
             <div className="container">
                 <div className="row">
                     {posts && posts.map((post: { title: React.ReactNode; _id: any; author: any; }) => (
@@ -72,14 +72,14 @@ function Home(): JSX.Element {
                                     </li>
                                     <li>
                                         {
-                                            isAuthenticated && (user.name === post.author) &&
+                                            state.isAuthenticated && (state.user === post.author) &&
                                             <Link to={`/edit/${post._id}`} className="btn btn-sm btn-outline-secondary">Edit
                                                 Post </Link>
                                         }
                                     </li>
                                     <li>
                                         {
-                                            isAuthenticated && (user.name === post.author) &&
+                                            state.isAuthenticated && (state.user === post.author) &&
                                             <button className="btn btn-sm btn-outline-secondary"
                                                     onClick={() => deletePost(post._id)}>Delete Post</button>
                                         }

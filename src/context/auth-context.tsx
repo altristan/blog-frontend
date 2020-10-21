@@ -1,49 +1,110 @@
-import React, {Component, createContext, useContext} from "react";
+import React, {createContext} from "react";
+import {ActionTypes} from "./auth-actions";
 
-interface ContextValueType {
-    user: any,
-    token: any;
-    isAuthenticated: boolean,
-    isLoading?: boolean,
-
-    logout?: (...p: any) => any
+interface AuthState {
+    user: string;
+    token: string;
+    isAuthenticated: boolean;
 }
 
-// create the context
-export const AuthContext: any = createContext<ContextValueType | null>(null);
-export const useAuth: any = () => useContext(AuthContext);
-
-interface IState {
-    user: any;
-    token: any;
-    isAuthenticated: boolean,
-    isLoading: boolean,
+export const INITIAL_STATE = {
+    user: '',
+    token: '',
+    isAuthenticated: false,
 }
 
-export class AuthProvider extends Component<{}, IState> {
-    constructor(props: any) {
-        super(props)
-        this.state = {
-            user: null,
-            token: null,
-            isLoading: true,
-            isAuthenticated: false,
-        };
+export interface Action {
+    type: ActionTypes;
+    payload?: any;
+}
 
-        const authUser = window.localStorage.getItem('user') || null;
-        const authToken =window.localStorage.getItem('token') || null;
-        this.setState({user: authUser, token: authToken, isLoading: false, isAuthenticated: true});
+export const AuthContext = createContext<{
+    state: AuthState;
+    dispatch: (action: Action) => void;
+}>({
+    state: INITIAL_STATE, dispatch: () => {
     }
+});
 
-    render() {
-        const {user, token, isLoading, isAuthenticated} = this.state;
-        const {children} = this.props;
-        const configObject = {
-            isLoading,
-            isAuthenticated,
-            user,
-            token,
-        };
-        return <AuthContext.Provider value={configObject}>{children}</AuthContext.Provider>;
+function checkAuth() {
+    const user = window.localStorage.getItem('user');
+    const token = window.localStorage.getItem('token');
+    let isAuthenticated;
+    if (user){
+        isAuthenticated = true;
+    } else {
+        isAuthenticated = false;
+    }
+    return {user, token, isAuthenticated}
+}
+
+export const authReducer: (state: any, action: any) => ({ isAuthenticated: boolean; user: string; token: string}) = (state, action) => {
+    const {type} = action;
+    switch (type) {
+        case ActionTypes.AUTHORIZED:
+            const authValues = checkAuth();
+            return {
+                ...state,
+                user: authValues.user,
+                token: authValues.token,
+                isAuthenticated: authValues.isAuthenticated
+            };
+        case ActionTypes.UNAUTHORIZED:
+            return {
+                ...state,
+                user: localStorage.setItem('user', ''),
+                token: localStorage.setItem('token', ''),
+                isAuthenticated: false
+            };
+        default:
+            return state;
     }
 }
+//
+// interface ContextValueType {
+//     user: any,
+//     token: any;
+//     isAuthenticated: boolean,
+//     isLoading?: boolean,
+//
+//     logout?: (...p: any) => any
+// }
+//
+// // create the context
+// export const AuthContext: any = createContext<ContextValueType | null>(null);
+// export const useAuth: any = () => useContext(AuthContext);
+//
+// interface IState {
+//     user: any;
+//     token: any;
+//     isAuthenticated: boolean,
+//     isLoading: boolean,
+// }
+//
+// export class AuthProvider extends Component<{}, IState> {
+//     constructor(props: any) {
+//         super(props)
+//         this.state = {
+//             user: null,
+//             token: null,
+//             isLoading: true,
+//             isAuthenticated: false,
+//         };
+//
+//         const authUser = window.localStorage.getItem('user') || null;
+//         const authToken =window.localStorage.getItem('token') || null;
+//         this.setState({user: authUser, token: authToken, isLoading: false, isAuthenticated: true});
+//     }
+//
+//     render() {
+//         const {user, token, isLoading, isAuthenticated} = this.state;
+//         const {children} = this.props;
+//         const configObject = {
+//             isLoading,
+//             isAuthenticated,
+//             user,
+//             token,
+//         };
+//         return <AuthContext.Provider value={configObject}>{children}</AuthContext.Provider>;
+//     }
+// }

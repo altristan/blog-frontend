@@ -1,11 +1,14 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {withRouter, useHistory} from 'react-router-dom';
 import {useForm} from "react-hook-form";
+import {AuthContext} from "../../context/auth-context";
+import {authorizedAction} from "../../context/auth-actions";
 
 
 function Login(): JSX.Element {
     let history = useHistory();
     const {register, handleSubmit, errors} = useForm();
+    const {dispatch} = useContext(AuthContext);
 
     interface IValues {
         [key: string]: any;
@@ -28,22 +31,28 @@ function Login(): JSX.Element {
         setLoading(false);
         setTimeout(() => {
             history.push('/');
+            dispatch(authorizedAction());
         }, 1500);
     }
 
     const submitform = async (formData: {}) => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/auth/signin`, {
+            await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/auth/signin`, {
                 method: "post",
                 headers: new Headers({
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 }),
                 body: JSON.stringify(formData)
-            });
-            console.log(response);
-            console.log(JSON.stringify(formData));
-            return response.ok;
+            })
+                .then(response => response.json())
+                .then(json => {
+                    console.log(json);
+                    localStorage.setItem('user', json.username);
+                    localStorage.setItem('token', json.accessToken);
+                })
+                .catch(err => console.log(err));
+            return true;
         } catch (ex) {
             console.log(ex);
             return false;
@@ -105,7 +114,10 @@ function Login(): JSX.Element {
                         )}
                     </div>
                     <div className="form-group col-md-4 pull-right">
-                        <button className="btn btn-success" type="submit">
+                        <button className="btn btn-success"
+                                type="submit"
+                                onClick={() => dispatch(authorizedAction())}
+                        >
                             Sign in
                         </button>
                         {loading &&

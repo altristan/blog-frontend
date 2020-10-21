@@ -1,26 +1,25 @@
 import React, {useState, useEffect} from 'react';
 import {useForm} from "react-hook-form";
 import {withRouter, useHistory} from 'react-router-dom';
-import {useAuth} from "../../context/auth-context";
 
 function Create(): JSX.Element {
     let history = useHistory();
-    const {user, token} = useAuth();
     const {register, handleSubmit, errors} = useForm();
 
     interface IValues {
         [key: string]: any;
     }
-
     const [author, setAuthor] = useState<string>('');
     const [values, setValues] = useState<IValues>([]);
     const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const user = window.localStorage.getItem('user');
+    const token = window.localStorage.getItem('token');
 
     useEffect(() => {
         if (user) {
             console.log(`this is the user: `, user);
-            setAuthor(user.name)
+            setAuthor(user)
         }
     }, [user])
 
@@ -126,13 +125,15 @@ function Create(): JSX.Element {
                                defaultValue={author}
                                onChange={(e) => handleInputChanges(e)}
                                name="author"
-                               className="form-control"/>
-                        {errors.author && errors.author.type === "required" && (
-                            <div className="error">Please enter your name.</div>
-                        )}
+                               className="form-control"
+                               readOnly={true}/>
+                        {/*{errors.author && errors.author.type === "required" && (*/}
+                        {/*    <div className="error">Please enter your name.</div>*/}
+                        {/*)}*/}
                     </div>
                     <div className="form-group col-md-4 pull-right">
-                        <button className="btn btn-success" type="submit">
+                        <button className="btn btn-success"
+                                type="submit">
                             Create Post
                         </button>
                         {loading &&

@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {useAuth} from "../../context/auth-context";
+// import {useAuth} from "../../context/auth-context";
 
 function Edit(): JSX.Element {
-    const {user, token} = useAuth();
+    // const {user, token} = useAuth();
     let history = useHistory();
     let {postId} = useParams();
 
@@ -42,7 +42,7 @@ function Edit(): JSX.Element {
                 headers: new Headers({
                     "Content-Type": "application/json",
                     Accept: "application/json",
-                    "authorization": `Bearer ${token}`
+                    // "authorization": `Bearer ${token}`
                 }),
                 body: JSON.stringify(values)
             });
