@@ -1,6 +1,7 @@
 export enum ActionTypes {
     AUTHORIZED = 'AUTHORIZED',
-    UNAUTHORIZED = 'UNAUTHORIZED'
+    UNAUTHORIZED = 'UNAUTHORIZED',
+    CURRENTUSER = 'CURRENTUSER'
 }
 
 export const authorizedAction = () => ({
@@ -10,3 +11,7 @@ export const authorizedAction = () => ({
 export const unauthorizedAction = () => ({
     type: ActionTypes.UNAUTHORIZED
 });
+
+export const currentUser = () => ({
+    type: ActionTypes.CURRENTUSER
+})

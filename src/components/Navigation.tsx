@@ -1,31 +1,33 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Link, useHistory, withRouter} from 'react-router-dom';
 import {AuthContext} from "../context/auth-context";
-import {authorizedAction, unauthorizedAction} from "../context/auth-actions";
+import {authorizedAction, currentUser, unauthorizedAction} from "../context/auth-actions";
 import {useForm} from "react-hook-form";
 
 function Navigation() {
     const {state, dispatch} = useContext(AuthContext);
     useEffect(() => {
         dispatch(authorizedAction());
+        dispatch(currentUser());
     }, []);
 
-    // console.log(state);
+    console.log(state);
 
     return (
         <nav className="navbar navbar-expand-xl navbar-dark bg-dark fixed-top">
 
             {/*<li><a className="navbar-brand" href="/">Home</a></li>*/}
             <li><Link className="navbar-brand nav-link"
-                      to="/" onClick={() => {dispatch(authorizedAction());
+                      to="/" onClick={() => {
+                          dispatch(authorizedAction());
             }}> Home </Link></li>
-            {!state.isAuthenticated && !(!!state.user) && (
+            {!state.isAuthenticated && (
                 <li><Link className="navbar-brand nav-link" to="/auth"> Account </Link></li>
             )}
-            {state.isAuthenticated && !!state.user && (
+            {state.isAuthenticated && (
                 <li><Link className="navbar-brand nav-link" to="/create"> Create </Link></li>
             )}
-            {state.isAuthenticated && !!state.user && (
+            {state.isAuthenticated && (
                 <li><Link className="navbar-brand nav-link"
                           to="/auth"
                           onClick={() => {
@@ -47,7 +49,7 @@ function Navigation() {
                             <strong>TBD</strong>
                         </a>
                         <div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                            <div className="px-2">Feature</div>
+                            <div className="px-2">Hello</div>
                             {/*<form className="px-2 py-2">*/}
                             {/*    <div className="form-group">*/}
                             {/*        <label htmlFor="exampleDropdownFormEmail1">Email address</label>*/}

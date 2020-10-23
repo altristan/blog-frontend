@@ -22,7 +22,7 @@ function Register(): JSX.Element {
             email: values.email,
             password: values.password
         }
-        const submitSuccess: boolean = await submitform(formData);
+        const submitSuccess: boolean = await submitForm(formData);
         setSubmitSuccess(submitSuccess);
         setValues({...values, formData});
         setLoading(false);
@@ -31,7 +31,7 @@ function Register(): JSX.Element {
         }, 1500);
     }
 
-    const submitform = async (formData: {}) => {
+    const submitForm = async (formData: {}) => {
         try {
             const response = await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/auth/signup`, {
                 method: "post",
@@ -41,7 +41,7 @@ function Register(): JSX.Element {
                 }),
                 body: JSON.stringify(formData)
             });
-            console.log('ok');
+            console.log(formData);
             return response.ok;
         } catch (ex) {
             console.log(ex);
@@ -56,7 +56,7 @@ function Register(): JSX.Element {
     }
 
     return (
-        <div className="profile-area">
+        <div className="profile-area fixed-top-margin">
             <div className={"col-md-12 form-wrapper"}>
                 {submitSuccess && (
                     <div className="alert alert-info mt-5" role="alert">

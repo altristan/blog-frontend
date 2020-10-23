@@ -1,27 +1,44 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {useForm} from "react-hook-form";
 import {withRouter, useHistory} from 'react-router-dom';
+import {AuthContext} from "../../context/auth-context";
 
 function Create(): JSX.Element {
     let history = useHistory();
     const {register, handleSubmit, errors} = useForm();
+    const {state, dispatch} = useContext(AuthContext);
 
     interface IValues {
         [key: string]: any;
     }
+
     const [author, setAuthor] = useState<string>('');
     const [values, setValues] = useState<IValues>([]);
     const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
-    const user = window.localStorage.getItem('user');
+    // const user = window.localStorage.getItem('user');
     const token = window.localStorage.getItem('token');
 
     useEffect(() => {
-        if (user) {
-            console.log(`this is the user: `, user);
-            setAuthor(user)
+        if (!state.user) {
+            console.log(`this is the user: `, state.user);
+            const fetchUser = async (): Promise<void> => {
+                const response = await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/auth/me`, {
+                    method: "post",
+                    headers: new Headers({
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                        "authorization": `Bearer ${token}`
+                    }),
+                })
+                    .then(res => res.json())
+                    .then(json => console.log(json))
+                    .catch(err => console.log(err));
+                console.log(`user is: ${response}`);
+            }
+            fetchUser();
         }
-    }, [user])
+    }, [state.user])
 
     const handleFormSubmission = async (e: React.FormEvent<HTMLFormElement> | any): Promise<void> => {
         setLoading(true);

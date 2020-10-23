@@ -25,7 +25,7 @@ function Login(): JSX.Element {
             email: values.email,
             password: values.password
         }
-        const submitSuccess: boolean = await submitform(formData);
+        const submitSuccess: boolean = await submitForm(formData);
         setSubmitSuccess(submitSuccess);
         setValues({...values, formData});
         setLoading(false);
@@ -35,9 +35,9 @@ function Login(): JSX.Element {
         }, 1500);
     }
 
-    const submitform = async (formData: {}) => {
+    const submitForm = async (formData: {}) => {
         try {
-            await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/auth/signin`, {
+            const res = await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/auth/signin`, {
                 method: "post",
                 headers: new Headers({
                     "Content-Type": "application/json",
@@ -47,8 +47,7 @@ function Login(): JSX.Element {
             })
                 .then(response => response.json())
                 .then(json => {
-                    // console.log(json);
-                    localStorage.setItem('user', json.username);
+                    console.log(json);
                     localStorage.setItem('token', json.accessToken);
                 })
                 .catch(err => console.log(err));
@@ -88,17 +87,17 @@ function Login(): JSX.Element {
                         )}
                     </div>
                     <div className="form-group col-md-12">
-                        <label htmlFor="email"> Email </label>
-                        <input type="text"
-                               id="email"
-                               ref={register({required: true})}
-                               onChange={(e) => handleInputChanges(e)}
-                               name="email"
-                               className="form-control"
-                               placeholder="Enter email"/>
-                        {errors.email && errors.email.type === "required" && (
-                            <div className="error">Please enter a valid email.</div>
-                        )}
+                        {/*<label htmlFor="email"> Email </label>*/}
+                        {/*<input type="text"*/}
+                        {/*       id="email"*/}
+                        {/*       ref={register({required: true})}*/}
+                        {/*       onChange={(e) => handleInputChanges(e)}*/}
+                        {/*       name="email"*/}
+                        {/*       className="form-control"*/}
+                        {/*       placeholder="Enter email"/>*/}
+                        {/*{errors.email && errors.email.type === "required" && (*/}
+                        {/*    <div className="error">Please enter a valid email.</div>*/}
+                        {/*)}*/}
                     </div>
                     <div className="form-group col-md-12">
                         <label htmlFor="email"> Password </label>
@@ -116,7 +115,6 @@ function Login(): JSX.Element {
                     <div className="form-group col-md-4 pull-right">
                         <button className="btn btn-success"
                                 type="submit"
-                                // onClick={() => dispatch(authorizedAction())}
                         >
                             Sign in
                         </button>

@@ -6,6 +6,7 @@ function Home(): JSX.Element {
     let history = useHistory()
     const {state} = useContext(AuthContext);
     const [posts, setPosts] = useState<any>();
+    console.log(state);
 
     const deletePost = async (id: string) => {
         await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/blog/delete?postID=${id}`, {
@@ -75,14 +76,16 @@ function Home(): JSX.Element {
                                     </li>
                                     <li>
                                         {
-                                            state.isAuthenticated && (state.user === post.author) &&
+                                            // (state.user === post.author) &&
+                                            state.isAuthenticated &&
                                             <Link to={`/edit/${post._id}`} className="btn btn-sm btn-outline-secondary">Edit
                                                 Post </Link>
                                         }
                                     </li>
                                     <li>
                                         {
-                                            state.isAuthenticated && (state.user === post.author) &&
+                                            // (state.user === post.author) &&
+                                            state.isAuthenticated &&
                                             <button className="btn btn-sm btn-outline-secondary"
                                                     onClick={() => deletePost(post._id)}>Delete Post</button>
                                         }

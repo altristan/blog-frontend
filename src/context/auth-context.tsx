@@ -1,4 +1,4 @@
-import React, {createContext} from "react";
+import {createContext} from "react";
 import {ActionTypes} from "./auth-actions";
 
 interface AuthState {
@@ -27,15 +27,12 @@ export const AuthContext = createContext<{
 });
 
 function checkAuth() {
-    const user = window.localStorage.getItem('user');
     const token = window.localStorage.getItem('token');
-    let isAuthenticated;
-    if (user){
+    let isAuthenticated = false;
+    if (token){
         isAuthenticated = true;
-    } else {
-        isAuthenticated = false;
     }
-    return {user, token, isAuthenticated}
+    return {token, isAuthenticated}
 }
 
 export const authReducer: (state: any, action: any) => ({ isAuthenticated: boolean; user: string; token: string}) = (state, action) => {
@@ -45,17 +42,24 @@ export const authReducer: (state: any, action: any) => ({ isAuthenticated: boole
             const authValues = checkAuth();
             return {
                 ...state,
-                user: authValues.user,
                 token: authValues.token,
                 isAuthenticated: authValues.isAuthenticated
             };
         case ActionTypes.UNAUTHORIZED:
             return {
                 ...state,
-                user: localStorage.setItem('user', ''),
+                user: '',
                 token: localStorage.setItem('token', ''),
                 isAuthenticated: false
             };
+        // case ActionTypes.CURRENTUSER:
+        //     return {
+        //         ...state,
+        //         user: async () => {
+        //             return await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/auth/me`)
+        //                 .then(res => res.json());
+        //         }
+        //     }
         default:
             return state;
     }
