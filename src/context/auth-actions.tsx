@@ -12,6 +12,6 @@ export const unauthorizedAction = () => ({
     type: ActionTypes.UNAUTHORIZED
 });
 
-export const currentUser = () => ({
-    type: ActionTypes.CURRENTUSER
-})
+// export const currentUser = () => ({
+//     type: ActionTypes.CURRENTUSER
+// })

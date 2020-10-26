@@ -6,7 +6,7 @@ import {AuthContext} from "../../context/auth-context";
 function Create(): JSX.Element {
     let history = useHistory();
     const {register, handleSubmit, errors} = useForm();
-    const {state, dispatch} = useContext(AuthContext);
+    const {state} = useContext(AuthContext);
 
     interface IValues {
         [key: string]: any;
@@ -16,29 +16,24 @@ function Create(): JSX.Element {
     const [values, setValues] = useState<IValues>([]);
     const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
-    // const user = window.localStorage.getItem('user');
-    const token = window.localStorage.getItem('token');
+    // const token = window.localStorage.getItem('token');
 
     useEffect(() => {
-        if (!state.user) {
-            console.log(`this is the user: `, state.user);
-            const fetchUser = async (): Promise<void> => {
-                const response = await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/auth/me`, {
-                    method: "post",
-                    headers: new Headers({
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                        "authorization": `Bearer ${token}`
-                    }),
-                })
-                    .then(res => res.json())
-                    .then(json => console.log(json))
-                    .catch(err => console.log(err));
-                console.log(`user is: ${response}`);
-            }
-            fetchUser();
+        const fetchUser = async (): Promise<void> => {
+            const response = await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/auth/me`, {
+                method: "post",
+                headers: new Headers({
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "authorization": `Bearer ${state.token}`
+                }),
+            })
+                .then(res => res.json())
+                .then(json => setAuthor(json.user))
+                .catch(err => console.log(err));
         }
-    }, [state.user])
+        fetchUser().then();
+    }, [])
 
     const handleFormSubmission = async (e: React.FormEvent<HTMLFormElement> | any): Promise<void> => {
         setLoading(true);
@@ -64,7 +59,7 @@ function Create(): JSX.Element {
                 headers: new Headers({
                     "Content-Type": "application/json",
                     "Accept": "application/json",
-                    "authorization": `Bearer ${token}`
+                    "authorization": `Bearer ${state.token}`
                 }),
                 body: JSON.stringify(formData)
             });

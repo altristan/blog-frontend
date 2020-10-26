@@ -2,7 +2,7 @@ import React, {useContext, useState} from 'react';
 import {withRouter, useHistory} from 'react-router-dom';
 import {useForm} from "react-hook-form";
 import {AuthContext} from "../../context/auth-context";
-import {authorizedAction} from "../../context/auth-actions";
+import {authorizedAction, unauthorizedAction} from "../../context/auth-actions";
 
 
 function Login(): JSX.Element {
@@ -16,46 +16,57 @@ function Login(): JSX.Element {
 
     const [values, setValues] = useState<IValues>([]);
     const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
+    const [submitError, setSubmitError] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
 
     const handleFormSubmission = async (e: React.FormEvent<HTMLFormElement> | any): Promise<void> => {
         setLoading(true);
         const formData = {
             username: values.username,
-            email: values.email,
             password: values.password
         }
         const submitSuccess: boolean = await submitForm(formData);
+        const submitError: boolean = !submitSuccess;
         setSubmitSuccess(submitSuccess);
+        setSubmitError(submitError);
         setValues({...values, formData});
         setLoading(false);
         setTimeout(() => {
-            history.push('/');
-            dispatch(authorizedAction());
-        }, 1500);
+            if (submitSuccess) {
+                history.push('/');
+                dispatch(authorizedAction());
+            } else {
+                // history.push('/auth/signin');
+                // setSubmitError(false);
+                window.location.reload();
+                dispatch(unauthorizedAction());
+            }
+
+        }, 1000);
     }
 
     const submitForm = async (formData: {}) => {
-        try {
-            const res = await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/auth/signin`, {
-                method: "post",
-                headers: new Headers({
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                }),
-                body: JSON.stringify(formData)
-            })
-                .then(response => response.json())
-                .then(json => {
-                    console.log(json);
-                    localStorage.setItem('token', json.accessToken);
-                })
-                .catch(err => console.log(err));
-            return true;
-        } catch (ex) {
-            console.log(ex);
-            return false;
-        }
+        let success: boolean = false;
+        await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/auth/signin`, {
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            }),
+            body: JSON.stringify(formData)
+        }).then(async (response) => {
+            if (response.ok) {
+                const json = await response.json();
+                localStorage.setItem('token', json.accessToken);
+                success = true;
+            } else {
+                success = false;
+            }
+        }).catch((error) => {
+           console.log(error);
+           success = false;
+        });
+        return success;
     }
     const setFormValues = (formValues: IValues) => {
         setValues({...values, ...formValues})
@@ -69,7 +80,12 @@ function Login(): JSX.Element {
             <div className={"col-md-12 form-wrapper"}>
                 {submitSuccess && (
                     <div className="alert alert-info" role="alert">
-                        The form was successfully submitted!
+                        The form was successfully submitted! Redirecting...
+                    </div>
+                )}
+                {submitError && (
+                    <div className="alert alert-danger" role="alert">
+                        Invalid credentials! Please try again...
                     </div>
                 )}
                 <form id={"create-user-form"} onSubmit={handleSubmit(handleFormSubmission)} noValidate={true}>
@@ -85,19 +101,6 @@ function Login(): JSX.Element {
                         {errors.username && errors.username.type === "required" && (
                             <div className="error">Please enter a username.</div>
                         )}
-                    </div>
-                    <div className="form-group col-md-12">
-                        {/*<label htmlFor="email"> Email </label>*/}
-                        {/*<input type="text"*/}
-                        {/*       id="email"*/}
-                        {/*       ref={register({required: true})}*/}
-                        {/*       onChange={(e) => handleInputChanges(e)}*/}
-                        {/*       name="email"*/}
-                        {/*       className="form-control"*/}
-                        {/*       placeholder="Enter email"/>*/}
-                        {/*{errors.email && errors.email.type === "required" && (*/}
-                        {/*    <div className="error">Please enter a valid email.</div>*/}
-                        {/*)}*/}
                     </div>
                     <div className="form-group col-md-12">
                         <label htmlFor="email"> Password </label>

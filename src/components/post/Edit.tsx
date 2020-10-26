@@ -3,7 +3,6 @@ import {useHistory, useParams} from 'react-router-dom';
 import {useForm} from "react-hook-form";
 
 function Edit(): JSX.Element {
-    // const {user, token} = useAuth();
     let history = useHistory();
     let {postId} = useParams();
     const {register, handleSubmit, errors} = useForm();
@@ -21,12 +20,10 @@ function Edit(): JSX.Element {
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
             const response = await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/blog/post/${postId}`);
-            const json = await response.json().then(
-
-            );
+            const json = await response.json().then();
             setPost(json)
         }
-        fetchData();
+        fetchData().then();
     }, [postId]);
 
     const handleFormSubmission = async (e: React.FormEvent<HTMLFormElement> | any): Promise<void> => {

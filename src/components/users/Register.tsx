@@ -41,7 +41,7 @@ function Register(): JSX.Element {
                 }),
                 body: JSON.stringify(formData)
             });
-            console.log(formData);
+            // console.log(formData);
             return response.ok;
         } catch (ex) {
             console.log(ex);

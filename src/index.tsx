@@ -3,15 +3,18 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import {BrowserRouter} from "react-router-dom";
+import {BrowserRouter, Route, Switch} from "react-router-dom";
+import NotFound from "./components/NotFound";
 
 ReactDOM.render(
-    // <AuthProvider>
-        <BrowserRouter>
-            <App />
-        </BrowserRouter>,
-    // </AuthProvider>,
-  document.getElementById('root')
+    <BrowserRouter>
+        <App/>
+        {/*<Switch>*/}
+        {/*    <Route path="/" component={App}/>*/}
+        {/*    <Route component={NotFound}/>*/}
+        {/*</Switch>*/}
+    </BrowserRouter>,
+    document.getElementById('root')
 );
 
 // // If you want your app to work offline and load faster, you can change

@@ -1,22 +1,16 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Link, useHistory, withRouter} from 'react-router-dom';
+import React, {useContext, useEffect} from 'react';
+import {Link, withRouter} from 'react-router-dom';
 import {AuthContext} from "../context/auth-context";
-import {authorizedAction, currentUser, unauthorizedAction} from "../context/auth-actions";
-import {useForm} from "react-hook-form";
+import {authorizedAction, unauthorizedAction} from "../context/auth-actions";
 
 function Navigation() {
     const {state, dispatch} = useContext(AuthContext);
     useEffect(() => {
         dispatch(authorizedAction());
-        dispatch(currentUser());
     }, []);
-
-    console.log(state);
 
     return (
         <nav className="navbar navbar-expand-xl navbar-dark bg-dark fixed-top">
-
-            {/*<li><a className="navbar-brand" href="/">Home</a></li>*/}
             <li><Link className="navbar-brand nav-link"
                       to="/" onClick={() => {
                           dispatch(authorizedAction());

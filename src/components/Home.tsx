@@ -6,7 +6,7 @@ function Home(): JSX.Element {
     let history = useHistory()
     const {state} = useContext(AuthContext);
     const [posts, setPosts] = useState<any>();
-    console.log(state);
+    const [author, setAuthor] = useState<string>('');
 
     const deletePost = async (id: string) => {
         await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/blog/delete?postID=${id}`, {
@@ -14,7 +14,7 @@ function Home(): JSX.Element {
             headers: new Headers({
                 "Content-Type": "application/json",
                 Accept: "application/json",
-                // "authorization": `Bearer ${token}`
+                "authorization": `Bearer ${state.token}`
             })
         });
         _removePostFromView(id);
@@ -32,11 +32,23 @@ function Home(): JSX.Element {
             const json = await response.json();
             setPosts(json)
         }
-        fetchPosts().then();
-        return () => {
-            setPosts(false);
+        if (state.token) {
+            const fetchUser = async (): Promise<void> => {
+                const response = await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/auth/me`, {
+                    method: "post",
+                    headers: new Headers({
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                        "authorization": `Bearer ${state.token}`
+                    }),
+                });
+                const json = await response.json();
+                setAuthor(json.user);
+            }
+            fetchUser().then();
         }
-    }, [])
+        fetchPosts().then();
+    },[state.token])
 
     return (
         <section className="blog-area section mt-5">
@@ -76,7 +88,7 @@ function Home(): JSX.Element {
                                     </li>
                                     <li>
                                         {
-                                            // (state.user === post.author) &&
+                                            (author === post.author) &&
                                             state.isAuthenticated &&
                                             <Link to={`/edit/${post._id}`} className="btn btn-sm btn-outline-secondary">Edit
                                                 Post </Link>
@@ -84,7 +96,7 @@ function Home(): JSX.Element {
                                     </li>
                                     <li>
                                         {
-                                            // (state.user === post.author) &&
+                                            (author === post.author) &&
                                             state.isAuthenticated &&
                                             <button className="btn btn-sm btn-outline-secondary"
                                                     onClick={() => deletePost(post._id)}>Delete Post</button>

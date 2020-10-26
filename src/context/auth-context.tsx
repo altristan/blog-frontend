@@ -2,13 +2,13 @@ import {createContext} from "react";
 import {ActionTypes} from "./auth-actions";
 
 interface AuthState {
-    user: string;
+    // user: string;
     token: string;
     isAuthenticated: boolean;
 }
 
 export const INITIAL_STATE = {
-    user: '',
+    // user: '',
     token: '',
     isAuthenticated: false,
 }
@@ -35,7 +35,7 @@ function checkAuth() {
     return {token, isAuthenticated}
 }
 
-export const authReducer: (state: any, action: any) => ({ isAuthenticated: boolean; user: string; token: string}) = (state, action) => {
+export const authReducer: (state: any, action: any) => ({ isAuthenticated: boolean; token: string}) = (state, action) => {
     const {type} = action;
     switch (type) {
         case ActionTypes.AUTHORIZED:
@@ -48,18 +48,10 @@ export const authReducer: (state: any, action: any) => ({ isAuthenticated: boole
         case ActionTypes.UNAUTHORIZED:
             return {
                 ...state,
-                user: '',
+                // user: '',
                 token: localStorage.setItem('token', ''),
                 isAuthenticated: false
             };
-        // case ActionTypes.CURRENTUSER:
-        //     return {
-        //         ...state,
-        //         user: async () => {
-        //             return await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/auth/me`)
-        //                 .then(res => res.json());
-        //         }
-        //     }
         default:
             return state;
     }
