@@ -1,4 +1,4 @@
-import React, {useReducer, Component, ReactNode} from 'react';
+import React, {useReducer} from 'react';
 import './App.css';
 import Login from "./components/users/Login";
 import Home from "./components/Home";
@@ -6,7 +6,7 @@ import Post from "./components/post/Post";
 import Edit from "./components/post/Edit";
 import Create from "./components/post/Create";
 import Navigation from "./components/Navigation";
-import {Redirect, Route, RouteProps, Router, RouterProps, Switch, useLocation} from "react-router";
+import {Redirect, Route, Switch, useLocation} from "react-router";
 import Auth from "./components/users/Auth";
 import Register from "./components/users/Register";
 import {AuthContext, authReducer, INITIAL_STATE} from "./context/auth-context";
@@ -23,7 +23,7 @@ function App(): JSX.Element {
     return (
         <AuthContext.Provider value={{state: authState, dispatch: authDispatch}}>
             <div className="App">
-                {(location.pathname != "/404") && (<Navigation/>)}
+                {(location.pathname !== "/404") && (<Navigation/>)}
                 <div className={'container'}>
                     <Switch>
                         <Route path={"/auth/signin"} component={Login}/>
@@ -38,7 +38,6 @@ function App(): JSX.Element {
                         {authState.isAuthenticated && (
                             <Route path={"/create"} component={Create}/>)
                         }
-                        {/*<Route component={NotFound}/>*/}
                         <Route render={() => <Redirect to={{pathname: "/404"}} />} />
                     </Switch>
                 </div>

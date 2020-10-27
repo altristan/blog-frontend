@@ -41,7 +41,6 @@ function Login(): JSX.Element {
                 window.location.reload();
                 dispatch(unauthorizedAction());
             }
-
         }, 1000);
     }
 
@@ -89,7 +88,7 @@ function Login(): JSX.Element {
                     </div>
                 )}
                 <form id={"create-user-form"} onSubmit={handleSubmit(handleFormSubmission)} noValidate={true}>
-                    <h4 className={"mt-5 mb-3"}>Log In to Your Account</h4>
+                    <h4 className={"mt-5 mb-3 center-header"}>Log In to Your Account</h4>
                     <div className="form-group col-md-12">
                         <label htmlFor="username"> Username </label>
                         <input type="text"

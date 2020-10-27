@@ -14,6 +14,8 @@ function Register(): JSX.Element {
     const [values, setValues] = useState<IValues>([]);
     const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [isCredUnique, setIsCredUnique] = useState<boolean>(false);
+    const [isEmailInvalid, setIsEmailInvalid] = useState<boolean>(false);
 
     const handleFormSubmission = async (e: React.FormEvent<HTMLFormElement> | any): Promise<void> => {
         setLoading(true);
@@ -27,11 +29,37 @@ function Register(): JSX.Element {
         setValues({...values, formData});
         setLoading(false);
         setTimeout(() => {
-            history.push('/auth/signin');
-        }, 1500);
+            if (submitSuccess) {
+                history.push('/auth/signin');
+            } else {
+                window.location.reload();
+            }
+        }, 1000);
     }
 
     const submitForm = async (formData: {}) => {
+        // let success: boolean = false;
+        // await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/auth/signup`, {
+        //     method: "post",
+        //     headers: new Headers({
+        //         "Content-Type": "application/json",
+        //         "Accept": "application/json",
+        //     }),
+        //     body: JSON.stringify(formData)
+        // }).then(async (response) => {
+        //     console.log(response);
+        //     if (response.ok) {
+        //         const json = await response.json();
+        //         console.log(json);
+        //         success = true;
+        //     } else {
+        //         success = false;
+        //     }
+        // }).catch((error) => {
+        //     console.log(error);
+        //     success = false
+        // });
+        // return success;
         try {
             const response = await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/auth/signup`, {
                 method: "post",
@@ -42,6 +70,18 @@ function Register(): JSX.Element {
                 body: JSON.stringify(formData)
             });
             // console.log(formData);
+            console.log(response);
+            if (response.status === 400) {
+                setIsEmailInvalid(true);
+                console.log('Is email invalid: ', isEmailInvalid);
+                return false;
+            }
+
+            if (response.status === 409) {
+                setIsCredUnique(true);
+                console.log('Is credential unique: ', isCredUnique);
+                return false;
+            }
             return response.ok;
         } catch (ex) {
             console.log(ex);
@@ -63,8 +103,18 @@ function Register(): JSX.Element {
                         The form was successfully submitted!
                     </div>
                 )}
+                {isCredUnique && (
+                    <div className="alert alert-danger" role="alert">
+                        Username/Email is already taken. Please try again...
+                    </div>
+                )}
+                {isEmailInvalid && (
+                    <div className="alert alert-danger" role="alert">
+                        Invalid email. Please try again...
+                    </div>
+                )}
                 <form id={"create-user-form"} onSubmit={handleSubmit(handleFormSubmission)} noValidate={true}>
-                    <h4 className={"mt-5 mb-3"}>Register</h4>
+                    <h4 className={"mt-5 mb-3 center-header"}>Create an Account</h4>
                     <div className="form-group col-md-12">
                         <label htmlFor="username"> Username </label>
                         <input type="text"
